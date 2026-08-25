@@ -1,0 +1,84 @@
+[scanner]
+provider = "fs"
+extractor = "type_aware"
+max_depth = 3
+max_files = 200
+snippet_size = 4096
+ignore_hidden = true
+ignore_globs = [".git/**", "node_modules/**", ".dynamic-folding/**", "Thumbs.db"]
+
+[preprocess]
+provider = "basic"
+# Dual-source representation (ADR 0025): the template emits the filename
+# stem and the internal document title in distinct slots, so the embedder
+# sees both signals. When `title` is unavailable (e.g., for images), the
+# slot collapses to a short `[TÍTULO]:` marker via SafeDict (no error).
+template = "[NOME]: {stem} [TÍTULO]: {title} [EXT]: {ext} [CONTEÚDO]: {snippet}"
+
+[embedding]
+# Real semantic embeddings via local SBERT model (no downloads, offline-only).
+# Set the model directory via the env var DYNAMIC_FOLDING_SBERT_MODEL_PATH, e.g.:
+#   $env:DYNAMIC_FOLDING_SBERT_MODEL_PATH = "C:\path\to\sentence-transformers\all-MiniLM-L6-v2\snapshots\<hash>"
+# To run with zero deps (deterministic FakeEmbedder), pass --config to a preset
+# that sets `provider = "fake"`, or rely on the in-code system defaults.
+provider = "sbert"
+device = "cpu"
+batch_size = 32
+normalize = true
+cache_db = "__default__"
+
+[reducer]
+provider = "umap"
+n_components = 10
+n_neighbors = 15
+random_state = 0
+
+[clustering]
+algorithm = "hdbscan"
+top_k = 3
+sub_k = 2
+random_state = 0
+min_cluster_size = 2
+
+[naming]
+# Local LLM via Ollama (loopback only). Falls back to tfidf on any failure.
+# Requires `ollama serve` running on 127.0.0.1:11434 with the named model pulled.
+provider = "ollama"
+base_url = "http://127.0.0.1:11434"
+model = "llama3.1:8b"
+timeout_s = 10
+top_k_files = 25
+
+# Prompt variant. "grounded" (default) anchors LLM generation in words
+# present in the cluster's files, reducing lexical invention identified
+# in the Likert pilot (Ch4 §4.7.2). It is the recommended variant for
+# small models (1–4 B params): its system message contains no concrete
+# domain examples and is not subject to the prompt-poisoning failure
+# mode that affects "default" under such models (see ADR 0024).
+# "default" is the prior free-form prompt, retained for comparison and
+# configurability. See ADR 0022 for grounded design, ADR 0024 for the
+# default-variant evidence.
+prompt_variant = "default"
+
+# Number of top TF-IDF anchor terms injected into the grounded prompt.
+top_anchor_terms = 5
+
+# Used for TF-IDF fallback (and can be used by other namers).
+top_terms = 2
+
+[proposal]
+provider = "two_level"
+# Bottom-up naming (ADR 0037): name leaf clusters from their documents, then
+# synthesize each parent folder from its children's names + its loose-file
+# terms. Avoids asking the LLM to thematize a heterogeneous parent bag (which
+# produced the meaningless "Group" label). Set to "per_node" for the prior
+# independent-per-folder labeling.
+naming_direction = "bottom_up"
+
+[ui]
+use_emojis = true
+
+[report]
+enabled = true
+output_path = "__default__"
+auto_open = true

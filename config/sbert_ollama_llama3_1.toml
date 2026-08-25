@@ -1,0 +1,40 @@
+[scanner]
+provider = "fs"
+extractor = "basic"
+max_depth = 2
+max_files = 200
+ignore_hidden = true
+ignore_globs = [".git/**", "node_modules/**", ".dynamic-folding/**", "Thumbs.db"]
+
+[preprocess]
+provider = "basic"
+template = "{stem} ext:{ext} path:{rel_path} size:{size} depth:{depth}"
+
+[embedding]
+# Required: existing LOCAL model directory (no downloads).
+# Set the path via the env var DYNAMIC_FOLDING_SBERT_MODEL_PATH, e.g.
+#   $env:DYNAMIC_FOLDING_SBERT_MODEL_PATH = "C:\Users\<you>\.cache\huggingface\hub\models--sentence-transformers--all-MiniLM-L6-v2\snapshots\<hash>"
+provider = "sbert"
+device = "cpu"
+batch_size = 32
+normalize = true
+cache_db = "__default__"
+
+[clustering]
+algorithm = "kmeans"
+top_k = 3
+sub_k = 2
+random_state = 0
+
+[naming]
+provider = "ollama"
+base_url = "http://127.0.0.1:11434"
+model = "llama3.1"
+timeout_s = 30
+top_k_files = 25
+
+# Used for TF-IDF fallback (and can be used by other namers).
+top_terms = 2
+
+[proposal]
+provider = "two_level"

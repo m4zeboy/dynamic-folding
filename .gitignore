@@ -1,0 +1,72 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyd
+*.pyo
+*.so
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+
+# uv
+.uv/
+
+# Local caches / app data
+.dynamic-folding/
+*.sqlite
+*.sqlite3
+
+# OS / editor
+.DS_Store
+Thumbs.db
+desktop.ini
+
+.idea/
+.vscode/
+.claude/*
+!.claude/skills/
+.obsidian/
+
+# Logs
+*.log
+
+# Naming debug JSONL (Phase D/F instrumentation, --debug-naming)
+naming_debug_*.jsonl
+
+# Local benchmark scratch (not thesis evidence)
+benchmark_results/
+
+# Sprint 19 characterization output (timestamped JSON, generated per run)
+characterization_results/
+
+# Sprint 19 analysis output (Markdown + PNG figures, generated)
+analysis_output/
+
+
+# TCC evaluation datasets (kept locally, not versioned)
+datasets/
+
+# Thesis manuscript artifacts (PDF, drafts, working files) live outside the tool repo
+
+design_handoff_dynamic_folding
+
+# Transient report/preview artifacts
+_preview_*.html
+*-report.html
+relatório_*.html
+relat*rio_*.html
+comparacao-*.json
+comparacao-*-PREVIEW.html
+
+# Personal writing notes / drafts (not versioned tool material)
+evaluation/Reescrita*.md

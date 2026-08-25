@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>dynamic-folding · comparação de algoritmos</title>
+<style>
+:root{
+  /* Vollkorn first (installed on the author's machine → baked into the exported PDF);
+     Georgia+ fallback keeps it readable everywhere. Still offline: the font name is only
+     referenced, never fetched (no @font-face, no web font). */
+  --serif:'Vollkorn',Georgia,Cambria,'Times New Roman','Liberation Serif',serif;
+  --sans:'Segoe UI',system-ui,-apple-system,'Helvetica Neue',sans-serif;
+  --mono:Consolas,'Cascadia Code','DejaVu Sans Mono',ui-monospace,monospace;
+  /* Warm paper + ink — a typeset document, not a product dashboard. */
+  --paper:#FCFBF8; --ink:#1A1A18; --ink2:#55524C; --ink3:#8C877D;
+  --rule:#DEDAD0; --rule2:#ECE8DF;
+  --accent:#1C5A66;            /* petrol — quiet, used sparingly */
+  --aside-bg:#FAF5E9; --aside-bd:#C29B43; --aside-tx:#5C4A1F;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--serif);font-size:16.5px;line-height:1.62;
+  background:var(--paper);color:var(--ink);padding:46px 24px;
+  counter-reset:sec;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+.doc{max-width:728px;margin:0 auto}
+
+/* masthead --------------------------------------------------------------- */
+.brand{display:flex;align-items:center;gap:8px;color:var(--ink3);
+  font-size:12.5px;margin-bottom:26px;font-family:var(--sans)}
+.brand svg{width:16px;height:16px}
+.brand svg path{fill:var(--accent)}      /* recolor the glyph off the old blue */
+.brand .lockup{font-size:13px;color:var(--ink2);letter-spacing:.01em;
+  text-transform:lowercase;font-weight:400}
+.brand .lockup b{font-weight:700;color:var(--ink)}
+.hero{border-bottom:1.5px solid var(--ink);padding-bottom:16px;margin-bottom:6px}
+.hero-title{font-size:27px;font-weight:600;letter-spacing:-.012em;color:var(--ink);
+  line-height:1.22;margin-bottom:9px}
+.hero-sum{font-size:14.5px;color:var(--ink2);font-style:italic}
+.hero-tags{margin-top:11px;font-family:var(--sans);font-size:12px;
+  color:var(--ink3);line-height:1.5}
+.tag{display:inline}
+.tag+.tag::before{content:'·';margin:0 8px;color:var(--ink3)}
+
+/* sections --------------------------------------------------------------- */
+.card{background:none;border:none;box-shadow:none;border-radius:0;padding:0}
+.section{border-top:1px solid var(--rule2);padding-top:26px;margin-top:26px}
+.hero+.section{border-top:none;padding-top:24px;margin-top:0}
+.section h2{font-family:var(--serif);font-size:19px;font-weight:600;color:var(--ink);
+  letter-spacing:-.008em;margin-bottom:3px}
+.section h2::before{counter-increment:sec;content:'§' counter(sec) '\00a0\00a0';
+  color:var(--accent);font-weight:600}
+.section .lead{font-style:italic;font-size:14px;color:var(--ink3);
+  font-weight:400;margin-bottom:13px}
+.section h3{font-family:var(--serif);font-size:14.5px;font-weight:600;
+  color:var(--ink);margin:20px 0 3px}
+
+/* prose ------------------------------------------------------------------ */
+.prose{font-size:16px;color:var(--ink);margin:11px 0 0;line-height:1.62}
+.prose+.prose{margin-top:9px}
+.prose b{color:var(--ink);font-weight:700}
+.prose i{font-style:italic}
+ul.tight{margin:11px 0 0;padding-left:21px;font-size:16px;color:var(--ink)}
+ul.tight li{margin:5px 0}
+ul.tight li::marker{color:var(--accent)}
+
+/* aside / callout — a sidenote rule, not a chip ------------------------- */
+.callout{background:var(--aside-bg);border-left:3px solid var(--aside-bd);
+  padding:12px 16px;font-size:15.5px;color:var(--aside-tx);margin:14px 0 0;
+  line-height:1.55}
+.callout b{font-weight:700}
+
+/* tables — booktabs: top/mid/bottom rules, no inner verticals ----------- */
+.tbl{width:100%;border-collapse:collapse;margin:17px 0 6px;font-size:14px;
+  border-top:1.5px solid var(--ink);border-bottom:1.5px solid var(--ink)}
+.tbl th,.tbl td{padding:7px 12px;text-align:left;border:none}
+.tbl thead th{font-family:var(--serif);font-variant:small-caps;letter-spacing:.02em;
+  font-size:13.5px;font-weight:600;color:var(--ink2);
+  border-bottom:1px solid var(--ink);padding-bottom:6px}
+.tbl tbody tr:first-child td{padding-top:9px}
+.tbl .num{text-align:right}
+.tbl td.num{font-family:var(--mono);font-variant-numeric:tabular-nums;
+  font-size:13px;color:var(--ink)}
+.tbl .name{font-weight:600;color:var(--ink)}
+.tbl .na{color:var(--ink3);font-style:italic}
+.tbl-cap{font-size:12.5px;color:var(--ink3);font-style:italic;margin-top:8px}
+
+/* provenance appendix ---------------------------------------------------- */
+.tech{border-top:1px solid var(--rule2);margin-top:26px}
+.tech>summary{list-style:none;cursor:pointer;padding:18px 0 4px;
+  font-family:var(--sans);font-size:12.5px;color:var(--ink2);
+  display:flex;align-items:center;gap:9px}
+.tech>summary::-webkit-details-marker{display:none}
+.tech>summary::before{content:"";width:6px;height:6px;border-right:1.5px solid var(--ink3);
+  border-bottom:1.5px solid var(--ink3);transform:rotate(-45deg);transition:transform .15s;
+  margin-bottom:2px}
+.tech[open]>summary::before{transform:rotate(45deg)}
+.tech-body{padding:6px 0 4px}
+.tech-body h3{font-family:var(--sans);font-size:12px;color:var(--ink2);font-weight:600;
+  letter-spacing:.01em;margin:16px 0 5px}
+.tech-body .mono{font-family:var(--mono);font-size:11.5px;color:var(--ink2);
+  white-space:pre-wrap;word-break:break-word;line-height:1.5}
+.kv{display:flex;flex-wrap:wrap;gap:5px 18px;margin-top:4px}
+.badge{background:none;border:none;border-radius:0;padding:0;
+  font-family:var(--sans);font-size:12.5px;color:var(--ink3)}
+.badge b{font-weight:600;color:var(--ink2)}
+.meta{font-family:var(--mono);font-size:11.5px;color:var(--ink3);
+  word-break:break-all;padding:4px 0;margin-top:4px}
+
+@media print{
+  body{background:#fff;padding:0}
+  .doc{max-width:none}
+  @page{margin:18mm}
+  /* keep atomic blocks whole — no table/callout/figure split across a page break */
+  .tbl,.callout,figure,img,.tech{break-inside:avoid}
+  /* a heading stays with the content it introduces (no orphaned title at page foot) */
+  .section h2,.section h3{break-after:avoid}
+  .prose{orphans:3;widows:3}
+}
+</style>
+</head>
+<body>
+<main class="doc">
+__DF_CONTENT__
+</main>
+</body>
+</html>

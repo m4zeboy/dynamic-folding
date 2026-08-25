@@ -1,0 +1,33 @@
+{
+    "contracts_version": 2,
+    "files": [
+        "code_project_alpha.py",
+        "invoice_2023_feb.pdf",
+        "invoice_2023_jan.pdf",
+        "photo_trip_paris_01.jpg"
+    ],
+    "proposal": {
+        "groups": [
+            {
+                "files": [
+                    "code_project_alpha.py",
+                    "invoice_2023_feb.pdf"
+                ],
+                "subfolders": []
+            },
+            {
+                "files": [
+                    "invoice_2023_jan.pdf"
+                ],
+                "subfolders": []
+            },
+            {
+                "files": [
+                    "photo_trip_paris_01.jpg"
+                ],
+                "subfolders": []
+            }
+        ],
+        "orphans": []
+    }
+}

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>dynamic folding</title>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; overflow: hidden; }
+    #root { height: 100%; }
+  </style>
+
+  <!-- Vendored offline-safe scripts (no CDN required at runtime) -->
+  <script src="vendor/react.development.js"></script>
+  <script src="vendor/react-dom.development.js"></script>
+</head>
+<body>
+  <div id="root"></div>
+  <!--
+    app.js is pre-compiled from app.jsx (the editable source) so the webview no
+    longer transpiles JSX in-browser on every launch. Regenerate after editing
+    app.jsx, fully offline, with the vendored Babel:
+      node -e "const B=require('./vendor/babel.min.js'),fs=require('fs');\
+        fs.writeFileSync('app.js',B.transform(fs.readFileSync('app.jsx','utf8'),\
+        {presets:[['react',{runtime:'classic'}]],filename:'app.jsx'}).code)"
+  -->
+  <script src="app.js"></script>
+</body>
+</html>

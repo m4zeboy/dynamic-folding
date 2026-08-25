@@ -1,0 +1,82 @@
+[build-system]
+requires = ["hatchling>=1.25.0"]
+build-backend = "hatchling.build"
+
+[project]
+name = "dynamic-folding"
+version = "1.3.0"
+description = "Offline semantic folder structure proposal tool (Windows-first)"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { file = "LICENSE" }
+authors = [{ name = "Moisés Azevedo", email = "moises775azevedo@gmail.com" }]
+keywords = ["folder-organization", "semantic-clustering", "offline", "windows", "cli", "embeddings"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Environment :: Console",
+  "Intended Audience :: End Users/Desktop",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: Microsoft :: Windows",
+  "Operating System :: POSIX :: Linux",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: System :: Filesystems",
+  "Topic :: Utilities",
+]
+dependencies = [
+  "scikit-learn>=1.5.0",
+  "hdbscan>=0.8.38",
+  "rich>=13.7.0",
+  "tomli-w>=1.0.0",
+  "pypdf>=6.10.2",
+  "pillow>=12.2.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/m4zeboy/TCC-Dynamic-Folding-v2"
+Repository = "https://github.com/m4zeboy/TCC-Dynamic-Folding-v2"
+Issues = "https://github.com/m4zeboy/TCC-Dynamic-Folding-v2/issues"
+Changelog = "https://github.com/m4zeboy/TCC-Dynamic-Folding-v2/blob/main/CHANGELOG.md"
+
+[project.optional-dependencies]
+sbert = [
+  "sentence-transformers>=3.0.0",
+]
+umap = [
+  "umap-learn>=0.5.0",
+]
+tui = [
+    "pywebview>=5.0",
+]
+office = [
+  "python-docx>=1.1.0",
+  "python-pptx>=0.6.23",
+]
+# Illustrative comparison figure only (compare --html). Optional + graceful:
+# the report renders without it (the figure step degrades to a visible note).
+viz = [
+  "matplotlib>=3.8",
+]
+
+[project.scripts]
+dynamic-folding = "dynamic_folding.cli:main"
+
+[tool.uv]
+# Keep dependency surface minimal in MVP.
+package = true
+
+[tool.hatch.build.targets.wheel]
+packages = ["dynamic_folding"]
+# babel.min.js is only used to regenerate app.js offline (see tui/web/index.html);
+# it is never loaded at runtime, so keep it out of the installed wheel (~3 MB).
+exclude = ["dynamic_folding/tui/web/vendor/babel.min.js"]
+
+[dependency-groups]
+dev = [
+  "pytest>=8.0.0",
+]
+
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
