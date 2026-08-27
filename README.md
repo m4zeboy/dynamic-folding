@@ -10,6 +10,8 @@ Ferramenta offline para propor uma organização semântica de arquivos em pasta
 
 ## Instalação
 
+No macOS, instale o [uv](https://docs.astral.sh/uv/getting-started/installation/) antes de continuar. Ter o Python instalado não instala o uv automaticamente.
+
 ```bash
 git clone https://github.com/m4zeboy/dynamic-folding.git
 cd dynamic-folding
