@@ -6,7 +6,6 @@ Ferramenta offline para propor uma organização semântica de arquivos em pasta
 
 - Python 3.11 ou superior;
 - [uv](https://docs.astral.sh/uv/);
-- Windows (a interface gráfica foi projetada para este ambiente).
 
 ## Instalação
 
