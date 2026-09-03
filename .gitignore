@@ -52,6 +52,9 @@ characterization_results/
 # Sprint 19 analysis output (Markdown + PNG figures, generated)
 analysis_output/
 
+# External evaluation output (generated per corpus, not versioned)
+external_evaluation_results/
+
 
 # TCC evaluation datasets (kept locally, not versioned)
 datasets/

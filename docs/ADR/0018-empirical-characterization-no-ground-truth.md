@@ -7,7 +7,9 @@ Date: 2026-05-07
 Accepted. **Amended by [ADR 0038](0038-bounded-empirical-justification-default-clusterer.md)** —
 bounded comparison + hyperparameter sensitivity of the default clusterer, and a single
 corpus (n=1). The core of this ADR (no ground truth; internal metrics characterize,
-not certify) stands.
+not certify) stands. **Amended by [ADR 0047](0047-external-evaluation-human-reference-partitions.md)** —
+the advisor-authorized human reference partitions permit a bounded external
+adherence evaluation; they do not become universal ground truth.
 
 ## Context
 

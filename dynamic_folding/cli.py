@@ -426,6 +426,31 @@ def main(argv: list[str] | None = None) -> int:
         help="Also write the per-group breakdown as CSV to this path",
     )
 
+    ext_p = sub.add_parser(
+        "external-eval",
+        help="Compare the proposed top-level grouping with human reference labels",
+    )
+    ext_p.add_argument("path", type=str, help="Directory path")
+    ext_p.add_argument(
+        "--labels",
+        type=str,
+        required=True,
+        help="UTF-8, semicolon-separated two-column human-label CSV",
+    )
+    ext_p.add_argument("--config", type=str, default=None, help="Path to a TOML config file")
+    ext_p.add_argument(
+        "--json",
+        type=str,
+        default=None,
+        help="Also write the external-evaluation result as JSON to this path",
+    )
+    ext_p.add_argument(
+        "--csv",
+        type=str,
+        default=None,
+        help="Also write the external-evaluation summary as CSV to this path",
+    )
+
     cmp_p = sub.add_parser(
         "compare",
         help="Compare clustering algorithms (structural + per-algorithm silhouette) "
@@ -748,6 +773,49 @@ def main(argv: list[str] | None = None) -> int:
 
             out = Path(args.csv)
             write_silhouette_csv(base, out)
+            print(f"\nCSV: {out.resolve()}")
+        return 0
+
+    if args.cmd == "external-eval":
+        from dynamic_folding.evaluation.external import (
+            ExternalEvaluationError,
+            evaluate_external,
+            format_external_evaluation,
+            read_reference_labels,
+        )
+
+        ext_root = _require_directory(args.path, "path")
+        cfg_path = _resolve_cli_config_path(args.config)
+        cfg = resolve_effective_config(ext_root, config_path=cfg_path)
+        if cfg.get("embedding", {}).get("provider") == "sbert":
+            ok, detail = _check_sbert(cfg["embedding"])
+            if not ok:
+                print(f"error: sbert not ready — {detail}", file=sys.stderr)
+                return 1
+        try:
+            labels = read_reference_labels(args.labels)
+            run = run_pipeline(ext_root, config_path=cfg_path)
+            evaluation = evaluate_external(run, labels)
+        except ExternalEvaluationError as exc:
+            print(f"error: external evaluation failed — {exc}", file=sys.stderr)
+            return 2
+
+        print(format_external_evaluation(evaluation))
+        export = {
+            "external_evaluation": evaluation.to_dict(),
+            "effective_config": cfg,
+            "config_source": str(cfg_path) if cfg_path else "system defaults",
+            "version": __version__,
+        }
+        if args.json:
+            out = Path(args.json)
+            out.write_text(json.dumps(export, ensure_ascii=True, indent=2), encoding="utf-8")
+            print(f"\nJSON: {out.resolve()}")
+        if args.csv:
+            from dynamic_folding.evaluation.csv_export import write_external_evaluation_csv
+
+            out = Path(args.csv)
+            write_external_evaluation_csv(evaluation, out)
             print(f"\nCSV: {out.resolve()}")
         return 0
 

@@ -1,4 +1,4 @@
-"""CSV export for the evaluation metrics (Silhouette, DBCV).
+"""CSV export for the evaluation metrics (Silhouette, DBCV, external agreement).
 
 Plain-text export so someone without this repo's HTML report (e.g. an advisor
 running the tool on their own dataset) can open the numbers in a spreadsheet.
@@ -11,6 +11,7 @@ import csv
 from pathlib import Path
 
 from dynamic_folding.evaluation.comparison import ComparisonResult
+from dynamic_folding.evaluation.external import ExternalEvaluationResult
 from dynamic_folding.evaluation.silhouette import SilhouetteBaselineResult
 
 _COMPARISON_FIELDS = (
@@ -71,3 +72,30 @@ def write_silhouette_csv(res: SilhouetteBaselineResult, path: str | Path) -> Non
         summary.writerow(["gap", res.gap])
         summary.writerow(["n_permutations", res.n_permutations])
         summary.writerow(["reason", res.reason])
+
+
+_EXTERNAL_FIELDS = (
+    "ari",
+    "nmi",
+    "ami",
+    "n_files",
+    "n_reference_classes",
+    "n_predicted_groups",
+    "n_predicted_outros",
+    "average_method",
+)
+
+
+def write_external_evaluation_csv(
+    res: ExternalEvaluationResult, path: str | Path
+) -> None:
+    """Write the one-row, corpus-level external-evaluation summary.
+
+    The class distributions are JSON-only because their column set changes with
+    the corpus; the flat CSV remains suitable for a three-corpus table.
+    """
+    with open(path, "w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=_EXTERNAL_FIELDS)
+        writer.writeheader()
+        row = res.to_dict()
+        writer.writerow({field: row[field] for field in _EXTERNAL_FIELDS})

@@ -521,7 +521,9 @@ The derived `K` is the number of clusters ≥ `min_cluster_size` at the selected
 
 ### Non-goals (Sprint 19)
 
-- No labeled corpora, no ARI/NMI/V-measure (rejected — see ADR 0018).
+- No labeled corpora, no ARI/NMI/V-measure (rejected at the time — see ADR
+  0018). This is later amended for the three human-labeled frozen corpora by
+  ADR 0047; it remains outside the Sprint 19 characterization harness.
 - No automation of the human Likert study; the protocol is intentionally manual.
 - No new clustering algorithms beyond `random`. The other clusterers are unchanged.
 
@@ -579,6 +581,30 @@ Section `[characterize]`:
 - **Analysis:** `scripts/analyze_results.py` runs on a directory of result JSONs and produces a Markdown table containing at minimum `method`, `corpus`, `silhouette`, `stability`, `runtime_s`. PNG figures are written if matplotlib is installed; otherwise a message is printed and exit code is still 0.
 - **Determinism & offline:** All Sprint 19 tests run offline without SBERT or Ollama and produce identical output across runs.
 - **Framing:** Documentation language follows ADR 0018 — "characterization", not "validation"; "properties", not "correctness". This is enforced by reviewer judgement, not by tests.
+
+## External evaluation against human references (ADR 0047)
+
+`dynamic-folding external-eval <dir> --labels <labels.csv> [--config <path.toml>]
+--json <result.json> --csv <result.csv>` runs the ordinary pipeline once and
+compares its proposed **top-level** partition with a human reference partition.
+The labels CSV is UTF-8, semicolon-separated, with the relative file path and
+human class in its first two columns. Existing exports may name the first column
+either `Arquivo` or `Nome do arquivo`.
+
+- **Complete, aligned inputs:** every scanned file must have one non-empty human
+  label; duplicate, missing and extra paths are errors. This prevents a score
+  over different populations of files.
+- **Hierarchy and coverage:** descendants inherit their top-level folder label.
+  Files in `Outros`, proposal orphans and any otherwise unassigned scanned file
+  are evaluated as the predicted `Outros` class, never discarded.
+- **Metrics:** output ARI, NMI and AMI (the advisor's ANMI terminology). NMI and
+  AMI use `average_method="arithmetic"`; ARI and AMI correct their chance
+  baseline. JSON additionally records class distributions, effective config,
+  config source and software version. CSV has one flat corpus-summary row.
+- **Interpretation:** the results quantify agreement with this contextual human
+  reference, not universal correctness or universal usefulness. Each frozen
+  corpus is reported separately; results must not choose a configuration or be
+  pooled into an all-corpus score.
 
 ## Sprint 22: PDF Smart Structural Extraction
 

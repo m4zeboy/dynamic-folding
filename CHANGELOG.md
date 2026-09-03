@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased - External Evaluation
+
+### Features
+- **External Evaluation (ARI + NMI + AMI):** New `external-eval` subcommand compares the proposed top-level grouping against a human-made reference partition (a semicolon-separated `caminho_relativo;rótulo` CSV covering every scanned file) and reports Adjusted Rand Index, Normalized Mutual Information, and Adjusted Mutual Information. Complements the existing unsupervised `compare` metrics (Silhouette + DBCV) with a supervised comparison against a labeling you provide yourself. (ADR 0047)
+
 ## 1.3.0-TCC (2026-06-07) - Native UI & Branding Release
 
 ### Features
